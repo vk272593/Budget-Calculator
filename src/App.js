@@ -18,7 +18,11 @@ function App() {
   //single expense*****amount***
   const [amount, setAmount] = useState("");
   //alert
-  const [alert,setAlert]=useState({show:false})
+  const [alert,setAlert]=useState({show:false});
+  //edit
+  const [edit,setEdit]=useState(false);
+  //edit item
+  const [id,setId]=useState(0)
   //Functionalities
   //handlecharge
   const handleCharge = (e) => {
@@ -39,15 +43,50 @@ function App() {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (charge !== "" && amount > 0) {
-      const addedExpenses = { id: uuid(), charge, amount };
+      if(edit){
+        let tempExpenses=expenses.map(item=>{
+          return item.id===id?{...item,charge,amount} :item;
+        })
+        setExpenses(tempExpenses);
+        setEdit(false)
+
+      }else{
+        const addedExpenses = { id: uuid(), charge, amount };
       setExpenses([...expenses, addedExpenses]);
       handleAlert({type:'success',text:'Item added'})
+
+      }
+      
       setCharge("");
       setAmount("");
     } else {
      handleAlert({type:'danger',text:'Either charge or amount is empty or both are empty please add charge and amount'})
     }
   };
+  //clear all item
+  const clearItems = ()=>{
+   setExpenses([]);
+   handleAlert({type:'danger',text:'All Item Removed'})
+  }
+  //Delete single item
+  const deleteItem = (id)=>{
+   const filterItem=expenses.filter((item)=>{
+     return item.id !==id;
+   })
+   setExpenses(filterItem);
+   handleAlert({type:'danger',text:'Item Removed'})
+  }
+  //Edit item
+  const editItem=(id)=>{
+    const expense=expenses.find((item)=>{return item.id===id})
+    const {charge,amount}=expense;
+    setCharge(charge);
+    setAmount(amount);
+    setEdit(true);
+    setId(id)
+
+    console.log(expense);
+  }
 
   return (
     <>
@@ -63,8 +102,14 @@ function App() {
           handleCharge={handleCharge}
           handleAmount={handleAmount}
           handleSubmit={handleSubmit}
+          edit={edit}
         />
-        <ExpenseList expenses={expenses} />
+        <ExpenseList 
+        expenses={expenses} 
+        deleteItem={deleteItem}
+        editItem={editItem}
+        clearItems={clearItems}
+        />
       </main>
       <h1>
         total spending :{" "}

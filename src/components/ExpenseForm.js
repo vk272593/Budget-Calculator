@@ -2,7 +2,7 @@ import React from "react";
 import { MdSend } from "react-icons/md";
 
 function ExpenseForm({
-    charge,amount,handleCharge,handleAmount,handleSubmit
+    charge,amount,handleCharge,handleAmount,handleSubmit,edit
 }) {
   
   return (
@@ -34,7 +34,7 @@ function ExpenseForm({
         </div>
       </div>
       <button className="btn" type="submit">
-        submit
+        {edit?'Edit':'submit'}
         <MdSend className="btn-icon" />
       </button>
     </form>
